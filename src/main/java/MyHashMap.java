@@ -119,7 +119,7 @@ public class MyHashMap<K,V> implements Map<K,V> {
         private V value;
         private Node next;
 
-        Node(K key, V value, Node node) {
+        Node(K key, V value, Node<K,V> node) {
             this.key = key;
             this.value = value;
             this.next = node;
