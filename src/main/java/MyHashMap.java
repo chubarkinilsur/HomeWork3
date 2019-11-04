@@ -1,60 +1,81 @@
 import java.util.*;
 
 
-public class MyHashMap<K,V> implements Map<K,V> {
+public class MyHashMap<K, V> implements Map<K, V> {
 
-    public int LENGTH = Integer.MAX_VALUE/1000;
+    private static int DEFAULT_INITIAL_CAPACITY = 16;
+    private static final float DEFAULT_LOAD_FACTOR = 0.75f;
+    private final float loadFactor;
     private int size = 0;
-    private Node[] entry = new Node[LENGTH];
+    private Node[] node;
+
+    public MyHashMap() {
+        this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR);
+    }
+
+    public MyHashMap(int initialCapacity, float loadFactor) {
+        this.loadFactor = loadFactor;
+        this.node = new Node[initialCapacity];
+    }
 
 
     public V put(K key, V value) {
 
-        if (containsKey(key)) throw new IllegalArgumentException();
+        if (containsKey(key)) return update(key, value);
 
-        Node currentNode = entry[indexFor(key)];
+        Node<K, V> currentNode = node[indexFor(key)];
         Node<K, V> node = new Node<K, V>(key, value, currentNode);
-        entry[indexFor(key)] = node;
+        this.node[indexFor(key)] = node;
         size++;
+        if (size * loadFactor > this.node.length) {
+            transfer();
+        }
         return node.value;
     }
 
-    public void update(Object key, Object value) {
-        Node node = (Node) get(key);
-        if (node != null)
-            node.value = value;
-        else throw new NoSuchElementException();
+    public V update(K key, V value) {
+        Node node = getNode(key);
+        V result = (V) node.value;
+        node.value = value;
+        return result;
     }
-
-
-
 
     public int size() {
         return size;
     }
 
     public boolean isEmpty() {
-        return size>0;
+        return size == 0;
     }
 
     public boolean containsKey(Object key) {
-        return get(key) != null;
+        return getNode(key) != null;
     }
 
-    public boolean containsValue(Object key) {
-        return get(key)!=null;
+    public boolean containsValue(Object value) {
+        for (int i = 0; i < node.length; i++) {
+            Node node = this.node[i];
+            while (node != null) {
+                if (node.value.equals(value))
+                    return true;
+                node = node.next;
+            }
+        }
+        return false;
     }
-
-
 
     public V get(Object key) {
-        Node node = entry[indexFor(key)];
+        return getNode(key) == null ? null : (V) getNode(key).value;
+    }
+
+    public Node getNode(Object key) {
+        Node node = this.node[indexFor(key)];
         while (node != null) {
-            if (node.key != key)
+            if (!node.key.equals(key))
                 node = node.next;
             else break;
         }
-        return (V) node.value;
+        return node;
     }
 
     public V remove(Object key) {
@@ -62,67 +83,109 @@ public class MyHashMap<K,V> implements Map<K,V> {
         if (get(key) == null) throw new NoSuchElementException();
 
         int hash = indexFor(key);
-        Node node = entry[hash];
-        if (node == null) return (V) key;
-        Node prev_entry = null;
+        Node node = this.node[hash];
+
+        Node prev_node = null;
         while (node != null) {
             if (node.key.equals(key)) {
-                Object value = entry[hash].value;
-                if (prev_entry != null)
-                    prev_entry.next = node.next;
+                Object value = this.node[hash].value;
+                if (prev_node != null)
+                    prev_node.next = node.next;
                 else
-                    entry[hash] = null;
+                    this.node[hash] = null;
                 size--;
-                return (V) key;
+                return (V) value;
             }
-            prev_entry = node;
+            prev_node = node;
             node = node.next;
         }
-        return (V) key;
+        return null;
     }
 
-    public void putAll(Map m) {
+    private void transfer() {
+        Node[] newEntry = new Node[node.length * 2];
+        for (int i = 0; i < node.length; i++) {
+            Node<K, V> node = this.node[i];
+            while (node != null) {
+                K key = node.key;
+                V value = node.value;
+                int newIndex = key == null ? 0 : Math.abs(key.hashCode()) % newEntry.length;
+                Node<K, V> newNode = newEntry[newIndex];
+                newEntry[newIndex] = new Node<K, V>(key, value, newNode);
+                node = node.next;
 
+            }
+
+        }
+    }
+
+    public void putAll(Map<? extends K, ? extends V> map) {
+
+        for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
+            this.put(entry.getKey(), entry.getValue());
+        }
     }
 
     public void clear() {
-
+        node = new Node[node.length];
     }
 
-    public Set keySet() {
-        return null;
+    public Set<K> keySet() {
+        Set<K> keySet = new HashSet<K>();
+        for (int i = 0; i < node.length; i++) {
+            Node node = this.node[i];
+            while (node != null) {
+                keySet.add((K) node.key);
+                node = node.next;
+            }
+        }
+        return keySet;
     }
 
     public Collection values() {
-        return null;
+        Collection<V> list = new ArrayList<V>();
+        for (int i = 0; i < node.length; i++) {
+            Node node = this.node[i];
+            while (node != null) {
+                list.add((V) node.value);
+                node = node.next;
+            }
+        }
+        return list;
     }
 
-    public Set<Entry<K, V>> entrySet() {
-        return null;
+    public Set<Map.Entry<K, V>> entrySet() {
+        Set entrySet = new HashSet();
+        for (int i = 0; i < node.length; i++) {
+            Node node = this.node[i];
+            while (node != null) {
+                entrySet.add(node);
+                node = node.next;
+            }
+        }
+        return entrySet;
     }
 
     private int indexFor(Object key) {
-        return key == null ? 0 : Math.abs(key.hashCode()) % LENGTH;
+        return key == null ? 0 : Math.abs(key.hashCode()) % node.length;
     }
 
-    public V getValue(K key) {
-        Node node = (Node) get(key);
-        if (node == null) throw new NoSuchElementException();
-
-        return (V) node.value;
-
-    }
-
-    static class Node<K,V> {
+    class Node<K, V> {
 
         private K key;
         private V value;
         private Node next;
 
-        Node(K key, V value, Node<K,V> node) {
+        Node(K key, V value, Node<K, V> node) {
+
             this.key = key;
             this.value = value;
             this.next = node;
+        }
+
+        @Override
+        public String toString() {
+            return key+"="+value;
         }
     }
 }
