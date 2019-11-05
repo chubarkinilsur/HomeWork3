@@ -11,7 +11,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     private static int DEFAULT_INITIAL_CAPACITY = 16;
     /**
-     * коофициен загрузки таблицы по умолчанию
+     * коофициент загрузки таблицы по умолчанию
      */
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
     private final float loadFactor;
