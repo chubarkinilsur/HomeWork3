@@ -2,8 +2,8 @@ import java.util.*;
 
 /**
  * MyHashMap домашнее задание №3 с применением родовых типов и реализацией интерфеса Map
- * @param <K>
- * @param <V>
+ * @param <K> параметризованный тип ключа
+ * @param <V> параметризованный тип значения
  */
 public class MyHashMap<K, V> implements Map<K, V> {
     /**
