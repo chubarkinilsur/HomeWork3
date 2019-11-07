@@ -1,9 +1,10 @@
 import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeMap;
 
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 class MyHashMapTest {
     MyHashMap<Integer, String> myMap = new MyHashMap<Integer, String>();
@@ -16,17 +17,7 @@ class MyHashMapTest {
             map.put(i, "val" + i);
         }
         myMap.put(1, "val11");
-        myMap.put(2, "val22");
-        myMap.put(3, "val33");
-        myMap.put(4, "val44");
-        myMap.put(5, "val55");
-
         map.put(1, "val11");
-        map.put(2, "val22");
-        map.put(3, "val33");
-        map.put(4, "val44");
-        map.put(5, "val55");
-
     }
 
     @org.junit.jupiter.api.Test
@@ -36,11 +27,7 @@ class MyHashMapTest {
         }
         assertEquals(map.containsValue("val11"), myMap.containsValue("val11"));
         assertEquals(map.containsValue("val22"), myMap.containsValue("val22"));
-        assertEquals(map.containsValue("val33"), myMap.containsValue("val33"));
-        assertEquals(map.containsValue("val44"), myMap.containsValue("val44"));
-        assertEquals(map.containsValue("val55"), myMap.containsValue("val55"));
-
-    }
+     }
 
     @org.junit.jupiter.api.Test
     void size() {

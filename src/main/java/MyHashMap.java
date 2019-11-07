@@ -2,24 +2,20 @@ import java.util.*;
 
 /**
  * MyHashMap домашнее задание №3 с применением родовых типов и реализацией интерфеса Map
+ *
  * @param <K> параметризованный тип ключа
  * @param <V> параметризованный тип значения
  */
 public class MyHashMap<K, V> implements Map<K, V> {
-    /**
-     * колличество корзин по умолчанию 16
-     */
+
     private static int DEFAULT_INITIAL_CAPACITY = 16;
-    /**
-     * коофициент загрузки таблицы по умолчанию
-     */
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
     private final float loadFactor;
     private int size = 0;
     private Node[] node;
 
     /**
-     * Конструктор таблицы со значениями по умолчанию
+     * Конструктор таблицы со значениями по умолчанию 16, 0.75
      */
     public MyHashMap() {
         this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR);
@@ -27,8 +23,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     /**
      * Конструктор позволяющий внести собственные значения initialCapacity и loadFactor
-     * @param initialCapacity
-     * @param loadFactor
+     * @param initialCapacity количество корзин default==16
+     * @param loadFactor      коофициент загрузки default==0.75
      */
     public MyHashMap(int initialCapacity, float loadFactor) {
         this.loadFactor = loadFactor;
@@ -38,9 +34,10 @@ public class MyHashMap<K, V> implements Map<K, V> {
     /**
      * Метод добавляет пару ключ key = значение value в таблицу, при внесении
      * в таблицу записи с существующим ключем key старое значение затирается
-     * @param key может быть null
+     *
+     * @param key   может быть null
      * @param value может быть null
-     * @return
+     * @return возвращает предыдущее значение записи, если такого ключа небыло то null.
      */
     @Override
     public V put(K key, V value) {
@@ -54,7 +51,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
         if (size * loadFactor > this.node.length) {
             transfer();
         }
-        return node.value;
+        return null;
     }
 
     private V update(K key, V value) {
@@ -65,7 +62,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
     }
 
     /**
-     *  @return количество записей в таблице.
+     * @return int количество записей в таблице.
      */
 
     @Override
@@ -74,7 +71,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
     }
 
     /**
-     * @return есть ли хоть одна запись в таблице
+     * @return true если в таблице нет ни одной записи, в противном случае false
      */
     @Override
     public boolean isEmpty() {
@@ -82,8 +79,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
     }
 
     /**
-     *
-     * @param key
+     * @param key поиск записи в таблице с ключем key
      * @return true если в таблице имеется запись с ключем равным key, в противном случае возвращает false.
      */
     @Override
@@ -92,8 +88,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
     }
 
     /**
-     *
-     * @param value
+     * @param value поиск записи в таблице со значением value
      * @return true если в таблице имеется запись со значением равным value, в противном случае возвращает false.
      */
     @Override
@@ -111,8 +106,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
 
     /**
-     *
-     * @param key
+     * @param key поиск записи в таблице с ключем key
      * @return возвращает значение заиси с ключем key. Может вернуть null.
      */
     @Override
@@ -133,8 +127,9 @@ public class MyHashMap<K, V> implements Map<K, V> {
     /**
      * Удаляет запись со значением ключа равным key. При отсутствии подобной записи
      * выбрасывааю исключение NoSuchElementException
-     * @param key
-     * @return  возвращает значение записи по ключу key
+     *
+     * @param key может быть null
+     * @return возвращает значение записи по ключу key
      */
     @Override
     public V remove(Object key) {
@@ -181,7 +176,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
     /**
      * Дабавляет записи таблицы map в существующую таблицу, при совпадение ключей,
      * записываюся значения из таблицы map/
-     * @param map
+     *
+     * @param map реализация интерфейса Map
      */
     public void putAll(Map<? extends K, ? extends V> map) {
 
@@ -265,7 +261,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
         @Override
         public String toString() {
-            return key+"="+value;
+            return key + "=" + value;
         }
     }
 }
