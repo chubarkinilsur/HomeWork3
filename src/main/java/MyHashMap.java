@@ -8,14 +8,14 @@ import java.util.*;
  */
 public class MyHashMap<K, V> implements Map<K, V> {
 
-    private static int DEFAULT_INITIAL_CAPACITY = 16;
+    private static final int DEFAULT_INITIAL_CAPACITY = 16;
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
     private final float loadFactor;
     private int size = 0;
     private Node[] node;
 
     /**
-     * Конструктор таблицы со значениями по умолчанию 16, 0.75
+     * Конструктор таблицы со значениями по умолчанию
      */
     public MyHashMap() {
         this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR);
@@ -23,8 +23,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     /**
      * Конструктор позволяющий внести собственные значения initialCapacity и loadFactor
-     * @param initialCapacity количество корзин default==16
-     * @param loadFactor      коофициент загрузки default==0.75
+     * @param initialCapacity количество корзин default==DEFAULT_INITIAL_CAPACITY
+     * @param loadFactor      коофициент загрузки default==DEFAULT_LOAD_FACTOR
      */
     public MyHashMap(int initialCapacity, float loadFactor) {
         this.loadFactor = loadFactor;
@@ -34,7 +34,6 @@ public class MyHashMap<K, V> implements Map<K, V> {
     /**
      * Метод добавляет пару ключ key = значение value в таблицу, при внесении
      * в таблицу записи с существующим ключем key старое значение затирается
-     *
      * @param key   может быть null
      * @param value может быть null
      * @return возвращает предыдущее значение записи, если такого ключа небыло то null.
@@ -42,13 +41,15 @@ public class MyHashMap<K, V> implements Map<K, V> {
     @Override
     public V put(K key, V value) {
 
-        if (containsKey(key)) return update(key, value);
+        if (containsKey(key)) {
+            return update(key, value);
+        }
 
         Node<K, V> currentNode = node[indexFor(key)];
         Node<K, V> node = new Node<K, V>(key, value, currentNode);
         this.node[indexFor(key)] = node;
         size++;
-        if (size * loadFactor > this.node.length) {
+        if ((size * this.loadFactor) > this.node.length) {
             transfer();
         }
         return null;
@@ -93,11 +94,12 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsValue(Object value) {
-        for (int i = 0; i < node.length; i++) {
-            Node node = this.node[i];
+        for (Node<K, V> item : node) {
+            Node<K, V> node = item;
             while (node != null) {
-                if (node.value.equals(value))
+                if (node.value.equals(value)) {
                     return true;
+                }
                 node = node.next;
             }
         }
@@ -111,15 +113,19 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public V get(Object key) {
-        return getNode(key) == null ? null : (V) getNode(key).value;
+        return (getNode(key) == null)
+                ? null
+                : (V) getNode(key).value;
     }
 
     private Node getNode(Object key) {
         Node node = this.node[indexFor(key)];
         while (node != null) {
-            if (!node.key.equals(key))
+            if (!node.key.equals(key)) {
                 node = node.next;
-            else break;
+            } else {
+                break;
+            }
         }
         return node;
     }
@@ -127,7 +133,6 @@ public class MyHashMap<K, V> implements Map<K, V> {
     /**
      * Удаляет запись со значением ключа равным key. При отсутствии подобной записи
      * выбрасывааю исключение NoSuchElementException
-     *
      * @param key может быть null
      * @return возвращает значение записи по ключу key
      */
@@ -139,18 +144,19 @@ public class MyHashMap<K, V> implements Map<K, V> {
         int hash = indexFor(key);
         Node node = this.node[hash];
 
-        Node prev_node = null;
+        Node prevNode = null;
         while (node != null) {
             if (node.key.equals(key)) {
                 Object value = this.node[hash].value;
-                if (prev_node != null)
-                    prev_node.next = node.next;
-                else
+                if (prevNode != null) {
+                    prevNode.next = node.next;
+                } else {
                     this.node[hash] = null;
+                }
                 size--;
                 return (V) value;
             }
-            prev_node = node;
+            prevNode = node;
             node = node.next;
         }
         return null;
@@ -163,7 +169,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
             while (node != null) {
                 K key = node.key;
                 V value = node.value;
-                int newIndex = key == null ? 0 : Math.abs(key.hashCode()) % newEntry.length;
+                int newIndex = indexFor(key);
                 Node<K, V> newNode = newEntry[newIndex];
                 newEntry[newIndex] = new Node<K, V>(key, value, newNode);
                 node = node.next;
@@ -191,6 +197,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public void clear() {
+        size = 0;
         node = new Node[node.length];
     }
 
@@ -214,10 +221,10 @@ public class MyHashMap<K, V> implements Map<K, V> {
      * @return возвращает коллекцию значений хранящихся в таблице
      */
     @Override
-    public Collection values() {
+    public Collection<V> values() {
         Collection<V> list = new ArrayList<V>();
-        for (int i = 0; i < node.length; i++) {
-            Node node = this.node[i];
+        for (Node value : node) {
+            Node node = value;
             while (node != null) {
                 list.add((V) node.value);
                 node = node.next;
@@ -232,8 +239,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
         Set entrySet = new HashSet();
-        for (int i = 0; i < node.length; i++) {
-            Node node = this.node[i];
+        for (Node value : node) {
+            Node node = value;
             while (node != null) {
                 entrySet.add(node);
                 node = node.next;
@@ -243,7 +250,9 @@ public class MyHashMap<K, V> implements Map<K, V> {
     }
 
     private int indexFor(Object key) {
-        return key == null ? 0 : Math.abs(key.hashCode()) % node.length;
+        return key == null
+                ? 0
+                : Math.abs(key.hashCode()) % node.length;
     }
 
     class Node<K, V> {

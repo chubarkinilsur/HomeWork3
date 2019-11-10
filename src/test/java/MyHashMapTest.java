@@ -1,4 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,8 +9,8 @@ import java.util.TreeMap;
 
 
 class MyHashMapTest {
-    MyHashMap<Integer, String> myMap = new MyHashMap<Integer, String>();
-    HashMap<Integer, String> map = new HashMap<Integer, String>();
+    private MyHashMap<Integer, String> myMap = new MyHashMap<Integer, String>();
+    private HashMap<Integer, String> map = new HashMap<Integer, String>();
 
     @BeforeEach
     void setUp() {
@@ -20,7 +22,7 @@ class MyHashMapTest {
         map.put(1, "val11");
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void put() {
         for (int i = 0; i < 100; i++) {
             assertEquals(map.containsValue("val" + i), myMap.containsValue("val" + i));
@@ -29,39 +31,39 @@ class MyHashMapTest {
         assertEquals(map.containsValue("val22"), myMap.containsValue("val22"));
      }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void size() {
         assertEquals(map.size(), myMap.size());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void isEmpty() {
         assertEquals(map.isEmpty(), myMap.isEmpty());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void containsKey() {
-        for (int i = 0; i < 105; i++) {
+        for (int i = 0; i < 100; i++) {
             assertEquals(map.containsKey(i), myMap.containsKey(i));
         }
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void containsValue() {
-        for (int i = 0; i < 105; i++) {
+        for (int i = 0; i < 100; i++) {
             assertEquals(map.containsValue("val" + i), myMap.containsValue("val" + i));
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void get() {
-        for (int i = 0; i < 105; i++) {
+        for (int i = 0; i < 100; i++) {
             assertEquals(map.get(i), myMap.get(i));
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void remove() {
         map.remove(1);
         myMap.remove(1);
@@ -72,9 +74,9 @@ class MyHashMapTest {
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void putAll() {
-        TreeMap treeMap = new TreeMap();
+        TreeMap<Integer, String> treeMap = new TreeMap<Integer, String>();
         for (int i = 50; i < 150; i++) {
             treeMap.put(i,"val"+i);
         }
@@ -84,18 +86,17 @@ class MyHashMapTest {
         for (Integer key: map.keySet()) {
             assertTrue(myMap.containsKey(key));
         }
-
-
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void clear() {
         map.clear();
         myMap.clear();
         assertEquals(map.entrySet().size(), myMap.entrySet().size());
+        assertEquals(map.size(),myMap.size());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void keySet() {
         Set<Integer> mapKeySet = map.keySet();
         Set<Integer> myMapKeySet = myMap.keySet();
@@ -106,21 +107,21 @@ class MyHashMapTest {
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void values() {
         Collection<String> mapValues = map.values();
-        Collection myMapValues = myMap.values();
+        Collection<String> myMapValues = myMap.values();
         for (String value : mapValues) {
             assertTrue(myMap.containsValue(value));
         }
         assertEquals(mapValues.size(), myMapValues.size());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void entrySet() {
 
-        Set mapEntry = map.entrySet();
-        Set myMapEntry = myMap.entrySet();
+        final Set<java.util.Map.Entry<Integer, String>> mapEntry = map.entrySet();
+        Set<java.util.Map.Entry<Integer, String>> myMapEntry = myMap.entrySet();
         assertEquals(mapEntry.size(), myMapEntry.size());
     }
 }
