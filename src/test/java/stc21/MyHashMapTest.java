@@ -25,6 +25,7 @@ class MyHashMapTest {
 
     @Test
     void put() {
+
         for (int i = 0; i < 100; i++) {
             assertEquals(map.containsValue("val" + i), myMap.containsValue("val" + i));
         }
@@ -121,7 +122,7 @@ class MyHashMapTest {
     @Test
     void entrySet() {
 
-        final Set<java.util.Map.Entry<Integer, String>> mapEntry = map.entrySet();
+        Set<java.util.Map.Entry<Integer, String>> mapEntry = map.entrySet();
         Set<java.util.Map.Entry<Integer, String>> myMapEntry = myMap.entrySet();
         assertEquals(mapEntry.size(), myMapEntry.size());
     }
